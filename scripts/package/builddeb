@@ -21,7 +21,7 @@ create_package() {
 	cp debian/changelog "$pdir/usr/share/doc/$pname/changelog.Debian"
 	gzip -9 "$pdir/usr/share/doc/$pname/changelog.Debian"
 	sh -c "cd '$pdir'; find . -type f ! -path './DEBIAN/*' -printf '%P\0' \
-		| xargs -r0 md5sum > DEBIAN/md5sums"
+		| xargs -r0 -L 256 md5sum > DEBIAN/md5sums"
 
 	# Fix ownership and permissions
 	chown -R root:root "$pdir"
@@ -94,10 +94,10 @@ fwdir="$objtree/debian/fwtmp"
 kernel_headers_dir="$objtree/debian/hdrtmp"
 libc_headers_dir="$objtree/debian/headertmp"
 dbg_dir="$objtree/debian/dbgtmp"
-packagename=linux-image-$version
-fwpackagename=linux-firmware-image-$version
-kernel_headers_packagename=linux-headers-$version
-libc_headers_packagename=linux-libc-dev
+packagename=linux-image-zynq-rt
+fwpackagename=linux-firmware-image-zynq-rt
+kernel_headers_packagename=linux-headers-zynq-rt
+libc_headers_packagename=linux-libc-dev-rt
 dbg_packagename=$packagename-dbg
 debarch=
 forcearch=
@@ -248,21 +248,21 @@ fi
 
 # Generate a simple changelog template
 cat <<EOF > debian/changelog
-$sourcename ($packageversion) $distribution; urgency=low
+linux-image-zynq-rt ($packageversion) unstable; urgency=low
 
-  * Custom built Linux kernel.
+  * Xilinx zynq Linux kernel with rt-preempt patches.
 
  -- $maintainer  $(date -R)
 EOF
 
 # Generate copyright file
 cat <<EOF > debian/copyright
-This is a packacked upstream version of the Linux kernel.
+This is a packacked zynq version of the Linux kernel.
 
 The sources may be found at most Linux ftp sites, including:
 ftp://ftp.kernel.org/pub/linux/kernel
 
-Copyright: 1991 - 2015 Linus Torvalds and others.
+Copyright: 1991 - 2009 Linus Torvalds and others.
 
 The git repository for mainline kernel development is at:
 git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
@@ -280,7 +280,7 @@ build_depends="bc, kmod, cpio "
 
 # Generate a control file
 cat <<EOF > debian/control
-Source: $sourcename
+Source: linux-image-zynq-rt
 Section: kernel
 Priority: optional
 Maintainer: $maintainer
@@ -310,7 +310,7 @@ else
 	cat <<EOF >> debian/control
 
 Package: $packagename
-Provides: linux-image, linux-image-2.6, linux-modules-$version
+Provides: linux-image, linux-image-zynq-rt, linux-modules-rt-$version
 Suggests: $fwpackagename
 Architecture: any
 Description: Linux kernel, version $version
