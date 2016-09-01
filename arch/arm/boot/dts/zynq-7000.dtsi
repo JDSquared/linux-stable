@@ -72,6 +72,15 @@
 			clocks = <&clkc 12>;
 		};
 
+
+		base_fpga_region: base_fpga_region {
+			compatible = "fpga-region";
+			fpga-mgr = <&devcfg>;
+			#address-cells = <0x1>;
+			#size-cells = <0x1>;
+			ranges;		
+		};
+
 		can0: can@e0008000 {
 			compatible = "xlnx,zynq-can-1.0";
 			status = "disabled";
@@ -244,7 +253,7 @@
 			clkc: clkc@100 {
 				#clock-cells = <1>;
 				compatible = "xlnx,ps7-clkc";
-				fclk-enable = <0>;
+				fclk-enable = <0xf>;
 				clock-output-names = "armpll", "ddrpll", "iopll", "cpu_6or4x",
 						"cpu_3or2x", "cpu_2x", "cpu_1x", "ddr2x", "ddr3x",
 						"dci", "lqspi", "smc", "pcap", "gem0", "gem1",
@@ -296,8 +305,8 @@
 			reg = <0xf8007000 0x100>;
 			interrupt-parent = <&intc>;
 			interrupts = <0 8 4>;
-			clocks = <&clkc 12>;
-			clock-names = "ref_clk";
+			clocks = <&clkc 12>, <&clkc 15>, <&clkc 16>, <&clkc 17>, <&clkc 18>;
+			clock-names = "ref_clk", "fclk0", "fclk1", "fclk2", "fclk3";
 			syscon = <&slcr>;
 		};
 
